@@ -162,7 +162,10 @@ const [state,dispatch]=useReducer(cartReducer,initState)
       />
       <View className='flex absolute w-full bottom-1 flex-row justify-end items-center border-t border-gray-400 py-2 px-3'>
         <Text className='font-bold text-base text-red-600 mr-4'>{state.totalPrice+"đ"}</Text>
-        <TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={()=>router.push('./checkout')}
+        >
           <Text className='text-white bg-black rounded-lg p-2 text-center'>Thanh toán</Text>
         </TouchableOpacity>
       </View>

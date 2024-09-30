@@ -10,6 +10,7 @@ const RootLayout = () => {
         <Stack.Screen name='login2' options={{headerShown:false}} />
         <Stack.Screen name='(tab)' options={{headerShown:false}} />
         <Stack.Screen name='cart' options={{headerShown:false}} />
+        <Stack.Screen name='checkout' options={{headerShown:false}} />
     </Stack>
   )
 }
