@@ -3,7 +3,7 @@ import React from 'react'
 import { TouchableOpacity } from 'react-native'
 import icons from "../constants/icons"
 
-const CartItem = ({url,proName,proPrice,size,color,containerStyles}) => {
+const CartItem = ({url,proName,quantity,proPrice,size,color,onIncreaseQuantity,onDecreaseQuantity,containerStyles}) => {
   return (
     <TouchableOpacity
         className={`flex flex-row p-2   bg-[#e6e6e6] rounded-lg h-20 ${containerStyles} `}
@@ -32,6 +32,7 @@ const CartItem = ({url,proName,proPrice,size,color,containerStyles}) => {
                 </View>
                 <View className='flex flex-row'>
                     <TouchableOpacity
+                        onPress={onDecreaseQuantity}
                         className='w-6 h-6 mr-2 items-center justify-center rounded-full bg-[#8E6CEF]'
                     >
                         <Image
@@ -40,7 +41,9 @@ const CartItem = ({url,proName,proPrice,size,color,containerStyles}) => {
                             resizeMode='cover'
                         />
                     </TouchableOpacity>
+                    <Text className='text-base font-bold text-black mr-2'>{""+quantity}</Text>
                     <TouchableOpacity
+                        onPress={onIncreaseQuantity}
                         className='w-6 h-6 items-center justify-center rounded-full bg-[#8E6CEF]'
                     >
                         <Image
