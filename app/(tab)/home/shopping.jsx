@@ -1,4 +1,4 @@
-import { View, Text, Image, ImageBackground, FlatList} from 'react-native'
+import { View, Text, Image, ImageBackground, FlatList, StyleSheet} from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import CustomButtonSearch from '../../../components/CustomButtonSearch'
@@ -10,6 +10,7 @@ import ProductItem from '../../../components/ProductItem'
 import GridPage from '../../../components/GridPage'
 import {width} from '../../../utils/Scaling'
 import { router } from 'expo-router'
+import { LinearGradient } from 'expo-linear-gradient'
 
 
 const categories=[
@@ -197,94 +198,101 @@ const Shopping = () => {
   const pages = chunkData(categories, itemsPerPage);
 
   return (
-    <SafeAreaView className='w-96 h-full bg-pink-400'>
-      <ImageBackground
-        
-      >
-        <View className='flex flex-row mx-2 mt-2'>
-          <TouchableOpacity
-            className='mr-3'
-          >
-            <Image
-              source={icons.ic_heart}
-              className='w-9 h-9 '
-              resizeMode='contain'
-            />
-          </TouchableOpacity>
-          <CustomButtonSearch
-            value="Shopping"
-            icon={icons.ic_search}
-            containerStyles="flex-1 mr-3"
-          />
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={()=>router.push('../../cart')}
-          >
-            <Image
-              source={icons.ic_cart}
-              className='w-9 h-9'
-              resizeMode='contain'
-            />
-          </TouchableOpacity>
-        </View>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          className='my-3 mx-2'
-        >
-          {categories.map((item)=>(
-            <View 
-              key={item.id.toString()}
-              className='px-2 py-2'
-            >
-              <TouchableOpacity
-                onPress={()=>{
-                  setCategoryIndex(item.id)
-                  console.log(categoryIndex+" "+item.id)
-                }}
-              > 
-                <Text className='text-white'>{item.name}</Text>
-                {item.id === categoryIndex ? (<View className={`w-[${item.name.length*8}] h-1 bg-white`}></View>) : <></>}
-              </TouchableOpacity>
-            </View>
-          ))}
-        </ScrollView>
-      </ImageBackground>
+    <LinearGradient
+      colors={['#00669991', '#E5EFF5']}
+      locations={[0.36,1]}
+    >
       
+      <SafeAreaView className='w-full h-full '>
 
-      <FlatList
-        data={products}
-        numColumns={2}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <ProductItem
-            url={item.url}
-            name={item.name}
-            price={item.price}
-            discountRate={item.discountRate}
-            containerStyles={{width:width/2-20}}
-          />
-        )}
-        ListHeaderComponent={() => (
-          <>
-            <PagerView
-              className='h-80 bg-white'
-              style={{ width:width }}
-              initialPage={0}
+        <ImageBackground
+          
+        >
+          <View className='flex flex-row mx-2 mt-2 items-center'>
+            <TouchableOpacity
+              className='mr-3'
             >
-              {pages.map((page, index) => (
-                <GridPage
-                  key={index}
-                  data={page}
-                />
-              ))}
-            </PagerView>
-          </>
-        )}
+              <Image
+                source={icons.ic_heart}
+                className='w-6 h-6  '
+                resizeMode='contain'
+              />
+            </TouchableOpacity>
+            <CustomButtonSearch
+              value="Shopping"
+              icon={icons.ic_search}
+              containerStyles="flex-1 mr-3"
+            />
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={()=>router.push('../../cart')}
+            >
+              <Image
+                source={icons.ic_cart}
+                className='w-7 h-6'
+                resizeMode='contain'
+              />
+            </TouchableOpacity>
+          </View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            className='my-3 mx-2'
+          >
+            {categories.map((item)=>(
+              <View 
+                key={item.id.toString()}
+                className='px-2 py-2'
+              >
+                <TouchableOpacity
+                  onPress={()=>{
+                    setCategoryIndex(item.id)
+                    console.log(categoryIndex+" "+item.id)
+                  }}
+                > 
+                  <Text className='text-white'>{item.name}</Text>
+                  {item.id === categoryIndex ? (<View className={`w-[${item.name.length*8}] h-1 bg-white`}></View>) : <></>}
+                </TouchableOpacity>
+              </View>
+            ))}
+          </ScrollView>
+        </ImageBackground>
+        
 
-        showsVerticalScrollIndicator={false}
-      />
-    </SafeAreaView>
+        <FlatList
+          data={products}
+          numColumns={2}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <ProductItem
+              url={item.url}
+              name={item.name}
+              price={item.price}
+              discountRate={item.discountRate}
+              containerStyles={['ml-[11px] shadow-[8px_8px_24px_0px_rgba(0,_0,_0,_0.10)]',{width:width/2-20}]}
+            />
+          )}
+          ListHeaderComponent={() => (
+            <>
+              <PagerView
+                className='h-80 bg-white'
+                style={{ width:width }}
+                initialPage={0}
+              >
+                {pages.map((page, index) => (
+                  <GridPage
+                    key={index}
+                    data={page}
+                  />
+                ))}
+              </PagerView>
+            </>
+          )}
+
+          showsVerticalScrollIndicator={false}
+        />
+      </SafeAreaView>
+    </LinearGradient>
   )
 }
 

@@ -23,31 +23,31 @@ const OrderItem = ({url,proName,quantity,proPrice,size,color,onIncreaseQuantity,
                 </View>
 
             </View>
-            <View className='flex flex-row justify-between'
+            <View className='flex flex-row relative'
                 style={{width:width-100}}
             >
                 <Text className='text-lg text-red-500'>{proPrice}</Text>
-                <View className='flex flex-row'>
+                <View className='flex flex-row border border-gray-300 rounded-2xl absolute right-4'>
                     <TouchableOpacity
-                            onPress={onDecreaseQuantity}
-                            className='w-6 h-6 mr-2 items-center justify-center rounded-full bg-[#8E6CEF]'
-                        >
-                            <Image
-                                source={icons.ic_minus}
-                                className='w-3 h-3'
-                                resizeMode='cover'
-                            />
+                        onPress={onDecreaseQuantity}
+                        className='w-6 h-6  items-center justify-center'
+                    >
+                        <Image
+                            source={icons.ic_minus}
+                            className='w-3 h-3 '
+                            resizeMode='contain'
+                        />
                     </TouchableOpacity>
-                    <Text className='text-sm font-bold text-black mr-2'>{quantity}</Text>
+                    <Text className='text-base font-bold  text-black text-center w-10 border-r border-l border-gray-300'>{quantity}</Text>
                     <TouchableOpacity
-                            onPress={onIncreaseQuantity}
-                            className='w-6 h-6 items-center justify-center rounded-full bg-[#8E6CEF]'
-                        >
-                            <Image
-                                source={icons.ic_plus}
-                                className='w-3 h-3'
-                                resizeMode='contain'
-                            />
+                        onPress={onIncreaseQuantity}
+                        className='w-6 h-6 items-center justify-center'
+                    >
+                        <Image
+                            source={icons.ic_plus}
+                            className='w-3 h-3 '
+                            resizeMode='contain'
+                        />
                     </TouchableOpacity>
                 </View>
             </View>

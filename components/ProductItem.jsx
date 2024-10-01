@@ -5,7 +5,7 @@ import { TouchableOpacity } from 'react-native'
 
 const ProductItem = ({url,discountRate,name,price,isBestseller,containerStyles,onPress}) => {
   return (
-    <View style={containerStyles} className={`rounded-lg bg-white  mx-2 my-2 ${containerStyles}`}>
+    <View style={containerStyles} className={`rounded-lg bg-white  mx-2 my-2 ${containerStyles} `}>
         <Image
             source={{uri:url}}
             className=' rounded-t-lg w- h-[220px] '

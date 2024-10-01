@@ -6,7 +6,8 @@ import icons from "../constants/icons"
 const CartItem = ({url,proName,quantity,proPrice,size,color,onIncreaseQuantity,onDecreaseQuantity,containerStyles}) => {
   return (
     <TouchableOpacity
-        className={`flex flex-row p-2   bg-[#e6e6e6] rounded-lg h-20 ${containerStyles} `}
+    style={{containerStyles}}
+        className={`flex flex-row p-2 bg-white  h-20 ${containerStyles} `}
         activeOpacity={1}
     >
         <Image
@@ -30,25 +31,25 @@ const CartItem = ({url,proName,quantity,proPrice,size,color,onIncreaseQuantity,o
                         <Text className='text-base font-bold text-black'>{color}</Text>
                     </View>
                 </View>
-                <View className='flex flex-row'>
+                <View className='flex flex-row border border-gray-300 rounded-2xl'>
                     <TouchableOpacity
                         onPress={onDecreaseQuantity}
-                        className='w-6 h-6 mr-2 items-center justify-center rounded-full bg-[#8E6CEF]'
+                        className='w-6 h-6  items-center justify-center'
                     >
                         <Image
                             source={icons.ic_minus}
-                            className='w-3 h-3'
-                            resizeMode='cover'
+                            className='w-3 h-3 '
+                            resizeMode='contain'
                         />
                     </TouchableOpacity>
-                    <Text className='text-base font-bold text-black mr-2'>{""+quantity}</Text>
+                    <Text className='text-base font-bold  text-black text-center w-10 border-r border-l border-gray-300'>{quantity}</Text>
                     <TouchableOpacity
                         onPress={onIncreaseQuantity}
-                        className='w-6 h-6 items-center justify-center rounded-full bg-[#8E6CEF]'
+                        className='w-6 h-6 items-center justify-center'
                     >
                         <Image
                             source={icons.ic_plus}
-                            className='w-3 h-3'
+                            className='w-3 h-3 '
                             resizeMode='contain'
                         />
                     </TouchableOpacity>
