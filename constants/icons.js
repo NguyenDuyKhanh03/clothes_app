@@ -11,5 +11,6 @@ import ic_arrow_right from '../assets/icons/ic_arrow_right.png';
 import ic_plus from '../assets/icons/ic_plus.png';
 import ic_minus from '../assets/icons/ic_minus.png';
 import ic_locate from '../assets/icons/ic_locate.png';
+import ic_chat from '../assets/icons/ic_chat.png';
 
-export default {ic_google, ic_facebook, ic_cart, ic_category, ic_heart, ic_home, ic_user, ic_search, ic_arrow_left, ic_arrow_right, ic_plus, ic_minus,ic_locate};
+export default {ic_google, ic_facebook, ic_cart, ic_category, ic_heart, ic_home, ic_user, ic_search, ic_arrow_left, ic_arrow_right, ic_plus, ic_minus,ic_locate,ic_chat};
