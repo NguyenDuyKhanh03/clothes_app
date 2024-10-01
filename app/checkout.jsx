@@ -121,6 +121,24 @@ const Checkout = () => {
                 )}
 
             </View>
+            <View className='bg-white h-40 mt-2'>
+                <View className='flex flex-row justify-between mt-2 mx-2 mb-4'>
+                    <Text className='text-sm font-normal'>Giá bán lẻ</Text>
+                    <Text className='text-base font-normal'>281.000đ</Text>
+                </View>
+                <View className='flex flex-row justify-between  mx-2 mb-4'>
+                    <Text className='text-sm font-normal'>Tổng phụ</Text>
+                    <Text className='text-base font-normal'>121.000đ</Text>
+                </View>
+                <View className='flex flex-row justify-between mx-2 mb-4'>
+                    <Text className='text-sm font-normal'>Phí vận chuyển</Text>
+                    <Text className='text-base font-normal'>FREE</Text>
+                </View>
+                <View className='flex flex-row justify-between items-center mx-2'>
+                    <Text className='text-sm font-normal'>Tổng số đơn hàng</Text>
+                    <Text className='text-xl text-red-500'>121.000đ</Text>
+                </View>
+            </View>
         </SafeAreaView>
     )
 }
