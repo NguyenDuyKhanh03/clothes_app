@@ -1,5 +1,5 @@
 import { View, Text, Image, ImageBackground, FlatList, StyleSheet} from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import CustomButtonSearch from '../../../components/CustomButtonSearch'
 import icons from "../../../constants/icons"
@@ -11,6 +11,9 @@ import GridPage from '../../../components/GridPage'
 import {width} from '../../../utils/Scaling'
 import { router } from 'expo-router'
 import { LinearGradient } from 'expo-linear-gradient'
+import { useNavigation } from 'expo-router'
+import axios from 'axios'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 
 const categories=[
@@ -116,74 +119,14 @@ const categories=[
   },
 ]
 const products=[
-  {
-    id:1,
-    url:'https://i.pinimg.com/564x/5e/0c/dd/5e0cdd3800cea7f8a6d66aecb1649a7c.jpg',
-    name:'Áo sơ mi trắng',
-    price:'200.000đ',
-    isBestseller:true,
-    discountRate:'-20 %'
-  },
-  {
-    id:2,
-    url:'https://i.pinimg.com/564x/5e/0c/dd/5e0cdd3800cea7f8a6d66aecb1649a7c.jpg',
-    name:'Áo sơ mi trắng',
-    price:'200.000đ',
-    sBestseller:true
-  },
-  {
-    id:3,
-    url:'https://i.pinimg.com/564x/5e/0c/dd/5e0cdd3800cea7f8a6d66aecb1649a7c.jpg',
-    name:'Áo sơ mi trắng',
-    price:'200.000đ',
-    discountRate:'20%'
-  },
-  {
-    id:4,
-    url:'https://i.pinimg.com/564x/5e/0c/dd/5e0cdd3800cea7f8a6d66aecb1649a7c.jpg',
-    name:'Áo sơ mi trắng',
-    price:'200.000đ',
-    discountRate:'20%'
-  },
-  {
-    id:5,
-    url:'https://i.pinimg.com/564x/5e/0c/dd/5e0cdd3800cea7f8a6d66aecb1649a7c.jpg',
-    name:'Áo sơ mi trắng',
-    price:'200.000đ',
-    discountRate:'20%'
-  },
-  {
-    id:6,
-    url:'https://i.pinimg.com/564x/5e/0c/dd/5e0cdd3800cea7f8a6d66aecb1649a7c.jpg',
-    name:'Áo sơ mi trắng',
-    price:'200.000đ',
-    discountRate:'20%'
-  },
-  {
-    id:7,
-    url:'https://i.pinimg.com/564x/5e/0c/dd/5e0cdd3800cea7f8a6d66aecb1649a7c.jpg',
-    name:'Áo sơ mi trắng',
-    price:'200.000đ',
-    discountRate:'20%'
-  },
-  {
-    id:8,
-    url:'https://i.pinimg.com/564x/5e/0c/dd/5e0cdd3800cea7f8a6d66aecb1649a7c.jpg',
-    name:'Áo sơ mi trắng',
-    price:'200.000đ',
-    discountRate:'20%'
-  },
-  {
-    id:9,
-    url:'https://i.pinimg.com/564x/5e/0c/dd/5e0cdd3800cea7f8a6d66aecb1649a7c.jpg',
-    name:'Áo sơ mi trắng',
-    price:'200.000đ',
-    discountRate:'20%'
-  }
-
+  
 ]
 
 const Shopping = () => {
+
+  const [products, setProducts] = useState([])
+  const Navigation=useNavigation()
+
   const [categoryIndex, setCategoryIndex] = useState(1)
 
   const chunkData = (data, itemsPerPage) => {
@@ -197,7 +140,40 @@ const Shopping = () => {
   const itemsPerPage = 12; 
   const pages = chunkData(categories, itemsPerPage);
 
+ 
+  const storeData= async (key) =>{
+    try{
+      const value = await AsyncStorage.getItem(key)
+      if(value !== null){
+        return value;
+      }
+    }catch(e){
+      console.log('Error:',e)
+    }
+
+  }
+
+  const handleGetProduct = async () => {
+    const token=await storeData('token');
+    axios.get('http://192.168.2.29:8080/api/v1/products/get-all', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    .then(response => {
+      setProducts(response.data);
+      console.log('Products:', products);
+    })
+    .catch(error => {
+      console.log('Get product error:', error);
+    });
+  }
+
+  useEffect(() => {
+    handleGetProduct();
+  },[]);
   return (
+
     <LinearGradient
       colors={['#00669991', '#E5EFF5']}
       locations={[0.36,1]}
@@ -265,10 +241,11 @@ const Shopping = () => {
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <ProductItem
-              url={item.url}
+              url={item.images[0]}
               name={item.name}
               price={item.price}
               discountRate={item.discountRate}
+              onPressPro={()=>Navigation.navigate('product_detail',{id:item.id})}
               containerStyles={['ml-[11px] shadow-[8px_8px_24px_0px_rgba(0,_0,_0,_0.10)]',{width:width/2-20}]}
             />
           )}

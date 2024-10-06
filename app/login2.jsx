@@ -6,14 +6,22 @@ import CustomButton from '../components/CustomButton'
 import { TouchableOpacity } from 'react-native'
 import { router, useLocalSearchParams } from 'expo-router'
 import axios from 'axios'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const Login2 = () => {
   const [password, setPassword] = useState('');
   const searchParams =useLocalSearchParams()
   const email=searchParams.email;
   
+const storeData= async (key,value) =>{
+  try{
+    await AsyncStorage.setItem(key,value)
+  }catch(e){
+    console.log('Error:',e)
+  }
+}
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     console.log("Button pressed!");
     axios.post('http://192.168.2.29:8080/api/v1/auth/login', {
       email: email,
@@ -22,12 +30,17 @@ const Login2 = () => {
     .then(response => {
       const token = response.data.token;
       console.log('JWT Token:', token);
-      
+      storeData('token',token)
     })
     .catch(error => {
       console.log('Login error:', error);
     });
   };
+
+  const handlePress= async () => {
+    await handleLogin();
+    router.push('./(tab)/home/shopping')
+  }
 
   return (
     <SafeAreaView className='mx-8 '>
@@ -42,7 +55,7 @@ const Login2 = () => {
         <CustomButton 
           title='Continue'
           containerStyles='w-full mt-4'
-          onPress={() => router.push('./(tab)/home/shopping')}
+          onPress={handlePress}
         />
         <TouchableOpacity
           className='mt-4'

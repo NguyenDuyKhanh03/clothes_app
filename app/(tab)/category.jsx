@@ -34,7 +34,7 @@ const Category = () => {
         { id: prevMessages.length + 1, from: receivedMessage.sender, msg: receivedMessage.content, to: 'admin' }
       ]);
     });
-    client.publish({ destination: '/app/chat.addUser', body: JSON.stringify({ sender: 'Khanh', type: 'JOIN' }) });
+    // client.publish({ destination: '/app/chat.addUser', body: JSON.stringify({ sender: 'Khanh', type: 'JOIN' }) });
       
   };
 
@@ -65,7 +65,7 @@ const Category = () => {
         destination: '/app/chat.sendMessage',
         body: JSON.stringify({
           content: msg,
-          sender: "Khanh",
+          sender: "admin",
           type: 'CHAT',
         }),
       });

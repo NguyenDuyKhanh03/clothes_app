@@ -3,9 +3,12 @@ import React from 'react'
 import { Image } from 'react-native'
 import { TouchableOpacity } from 'react-native'
 
-const ProductItem = ({url,discountRate,name,price,isBestseller,containerStyles,onPress}) => {
+const ProductItem = ({url,discountRate,name,price,isBestseller,containerStyles,onPress,onPressPro}) => {
   return (
-    <View style={containerStyles} className={`rounded-lg bg-white  mx-2 my-2 ${containerStyles} `}>
+    <TouchableOpacity 
+        onPress={onPressPro}
+        activeOpacity={1}
+        style={containerStyles} className={`rounded-lg bg-white  mx-2 my-2 ${containerStyles} `}>
         <Image
             source={{uri:url}}
             className=' rounded-t-lg w- h-[220px] '
@@ -30,7 +33,7 @@ const ProductItem = ({url,discountRate,name,price,isBestseller,containerStyles,o
             </TouchableOpacity>
         }
         <Text className={`ml-2 mb-3 ${discountRate?'text-red-400':'text-black'} text-sm mt-1`}>{price}</Text>
-    </View>
+    </TouchableOpacity>
   )
 }
 
