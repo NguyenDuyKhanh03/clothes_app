@@ -9,6 +9,7 @@ import { FlatList } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
+import { handleUpdateProductFromCart } from '../services/CartService'
 
 //useReducer
 //containerStyles:'mx-2 mt-2'
@@ -27,8 +28,6 @@ const DECREASE_QUANTITY='decreaseQuantity'
 //3. Reducer
 
 const cartReducer=(state,action)=>{
-  console.log("Action"+ action.cartItems)
-  console.log("Prev state"+ state.cartItems)
 
   switch(action.type){
     case INCREASE_QUANTITY:
@@ -106,27 +105,7 @@ const Cart = () => {
       console.log('Token',token)
     });
   }
-  const handleUpdateProductFromCart = async (id,token) => {
-    axios.post('http://192.168.2.29:8080/api/v1/cart/update',
-    null,
-    {
-        headers:{
-          'Authorization':`Bearer ${token}`
-        },
-        params:{
-          product_id:id,
-          quantity:1
-        }
-    })
-    .then(response=>{
-      console.log('Update product from cart:',response.data)
-      console.log('Token',token)
-    })
-    .catch(error=>{
-      console.log('Update product from cart: error:',error)
-      console.log('Token',token)
-    });
-  }
+
 
   useEffect(()=>{
     const fetchCartItems=async ()=>{
@@ -186,9 +165,8 @@ const Cart = () => {
   }
 
   const handleIncreaseQuantity=async(id)=>{
-    const token = await storeData('token');
     dispatch({type:INCREASE_QUANTITY,payload:id})
-    handleUpdateProductFromCart(id,token)
+    handleUpdateProductFromCart(id)
   }
 
 

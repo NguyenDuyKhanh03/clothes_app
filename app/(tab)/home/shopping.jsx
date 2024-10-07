@@ -12,9 +12,8 @@ import {width} from '../../../utils/Scaling'
 import { router } from 'expo-router'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useNavigation } from 'expo-router'
-import axios from 'axios'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-
+import { handleGetProduct } from '../../../services/ProductService'
+import { handleAddCart } from '../../../services/CartService'
 
 const categories=[
   {
@@ -118,9 +117,6 @@ const categories=[
     url:"https://res.cloudinary.com/dkzvrtfvc/image/upload/v1727348925/category_aonam_s4dujo.png"
   },
 ]
-const products=[
-  
-]
 
 const Shopping = () => {
 
@@ -140,58 +136,16 @@ const Shopping = () => {
   const itemsPerPage = 12; 
   const pages = chunkData(categories, itemsPerPage);
 
- 
-  const storeData= async (key) =>{
-    try{
-      const value = await AsyncStorage.getItem(key)
-      if(value !== null){
-        return value;
-      }
-    }catch(e){
-      console.log('Error:',e)
-    }
-
-  }
-
-  const handleGetProduct = async () => {
-    const token=await storeData('token');
-    axios.get('http://192.168.2.29:8080/api/v1/products/get-all', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    .then(response => {
-      setProducts(response.data);
-      console.log('Products:', products);
-    })
-    .catch(error => {
-      console.log('Get product error:', error);
-    });
-  }
-
-  const handleAddCart = async (id) => {
-    const token = await storeData('token');
-    axios.post('http://192.168.2.29:8080/api/v1/cart/add', 
-    null,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
-      params: {
-        product_id: id,
-        quantity: 1
-      }
-    })
-    .then(response => {
-      console.log('Add to cart:', response.data);
-    })
-    .catch(error => {
-      console.log('Add to cart error:', error.response ? error.response.data : error.message);
-    });
-  }
 
   useEffect(() => {
-    handleGetProduct();
+    const fetchProduct = async () => {
+      const productData=await handleGetProduct();
+      if(productData){
+        setProducts(productData);
+        console.log('ProductsA:', productData);
+      }
+    }
+    fetchProduct();
   },[]);
   return (
 

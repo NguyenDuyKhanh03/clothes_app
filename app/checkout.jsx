@@ -16,42 +16,6 @@ const orders = [
         size: 'M',
         color: 'Black',
     },
-    // {
-    //     id: 2,
-    //     url: 'https://i.pinimg.com/564x/5e/0c/dd/5e0cdd3800cea7f8a6d66aecb1649a7c.jpg',
-    //     proName: 'Abstract Art',
-    //     proPrice: 100,
-    //     quantity: 4,
-    //     size: 'M',
-    //     color: 'Black',
-    // },
-    // {
-    //     id: 3,
-    //     url: 'https://i.pinimg.com/564x/5e/0c/dd/5e0cdd3800cea7f8a6d66aecb1649a7c.jpg',
-    //     proName: 'Abstract Art',
-    //     quantity: 4,
-    //     proPrice: 100,
-    //     size: 'M',
-    //     color: 'Black',
-    // },
-    // {
-    //     id: 4,
-    //     url: 'https://i.pinimg.com/564x/5e/0c/dd/5e0cdd3800cea7f8a6d66aecb1649a7c.jpg',
-    //     proName: 'Abstract Art',
-    //     quantity: 4,
-    //     proPrice: 100,
-    //     size: 'M',
-    //     color: 'Black',
-    // },
-    // {
-    //     id: 5,
-    //     url: 'https://i.pinimg.com/564x/5e/0c/dd/5e0cdd3800cea7f8a6d66aecb1649a7c.jpg',
-    //     proName: 'Abstract Art',
-    //     quantity: 4,
-    //     proPrice: 100,
-    //     size: 'M',
-    //     color: 'Black',
-    // },
 ]
 
 const Checkout = () => {
