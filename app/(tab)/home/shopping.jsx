@@ -169,6 +169,27 @@ const Shopping = () => {
     });
   }
 
+  const handleAddCart = async (id) => {
+    const token = await storeData('token');
+    axios.post('http://192.168.2.29:8080/api/v1/cart/add', 
+    null,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      params: {
+        product_id: id,
+        quantity: 1
+      }
+    })
+    .then(response => {
+      console.log('Add to cart:', response.data);
+    })
+    .catch(error => {
+      console.log('Add to cart error:', error.response ? error.response.data : error.message);
+    });
+  }
+
   useEffect(() => {
     handleGetProduct();
   },[]);
@@ -246,6 +267,7 @@ const Shopping = () => {
               price={item.price}
               discountRate={item.discountRate}
               onPressPro={()=>Navigation.navigate('product_detail',{id:item.id})}
+              onPressAddCart={()=>handleAddCart(item.id)}
               containerStyles={['ml-[11px] shadow-[8px_8px_24px_0px_rgba(0,_0,_0,_0.10)]',{width:width/2-20}]}
             />
           )}

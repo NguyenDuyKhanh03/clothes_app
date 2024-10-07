@@ -6,10 +6,26 @@ import CustomButton from '../components/CustomButton'
 import icons from '../constants/icons'
 import { TouchableOpacity } from 'react-native'
 import { useNavigation } from 'expo-router'
+import {ANDROID_CLIENT_ID, IOS_CLIENT_ID,WEB_CLIENT_ID} from '@env'
+import * as Google from 'expo-auth-session/providers/google'
+import { makeRedirectUri } from 'expo-auth-session'
+import * as WebBrowser from 'expo-web-browser'
+
+WebBrowser.maybeCompleteAuthSession()
 
 const Login1 = () => {
   const [email, setEmail] = useState('')
   const navigation = useNavigation();
+  const config = {
+    iosClientId: IOS_CLIENT_ID,
+    androidClientId: ANDROID_CLIENT_ID,
+    webClientId: WEB_CLIENT_ID,
+    redirectUri: makeRedirectUri(),
+    scopes: ["profile", "email"],
+  }
+
+
+  const [request, response, promptAsync] = Google.useAuthRequest(config)
 
   return (
     <SafeAreaView className='mx-8 '>
@@ -35,7 +51,7 @@ const Login1 = () => {
           title='Continue with Facebook'
           containerStyles='mt-[71px] bg-[#e6e6e6]'
           titleStyles='text-[#272727]'
-          onPress={() => console.log(email)}
+          onPress={() => promptAsync()}
         />
     </SafeAreaView>
   )

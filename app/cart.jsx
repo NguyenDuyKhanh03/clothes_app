@@ -1,5 +1,5 @@
 import { View, Text, Image, Alert, StyleSheet } from 'react-native'
-import React, { useReducer } from 'react'
+import React, { useEffect, useReducer } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { TouchableOpacity } from 'react-native'
 import icons from "../constants/icons"
@@ -7,59 +7,15 @@ import { router } from 'expo-router'
 import CartItem from '../components/CartItem'
 import { FlatList } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import axios from 'axios'
 
 //useReducer
 //containerStyles:'mx-2 mt-2'
 // 1.Init state
 const initState={
-  'cartItems':[
-    {
-      id:1,
-      url:'https://i.pinimg.com/564x/5e/0c/dd/5e0cdd3800cea7f8a6d66aecb1649a7c.jpg',
-      proName:'Abstract Art',
-      proPrice:100,
-      quantity:4,
-      size:'M',
-      color:'Black',
-    },
-    {
-      id:2,
-      url:'https://i.pinimg.com/564x/5e/0c/dd/5e0cdd3800cea7f8a6d66aecb1649a7c.jpg',
-      proName:'Abstract Art',
-      proPrice:100,
-      quantity:4,
-      size:'M',
-      color:'Black',
-    },
-    {
-      id:3,
-      url:'https://i.pinimg.com/564x/5e/0c/dd/5e0cdd3800cea7f8a6d66aecb1649a7c.jpg',
-      proName:'Abstract Art',
-      quantity:4,
-      proPrice:100,
-      size:'M',
-      color:'Black',
-    },
-    {
-      id:4,
-      url:'https://i.pinimg.com/564x/5e/0c/dd/5e0cdd3800cea7f8a6d66aecb1649a7c.jpg',
-      proName:'Abstract Art',
-      quantity:4,
-      proPrice:100,
-      size:'M',
-      color:'Black',
-    },
-    {
-      id:5,
-      url:'https://i.pinimg.com/564x/5e/0c/dd/5e0cdd3800cea7f8a6d66aecb1649a7c.jpg',
-      proName:'Abstract Art',
-      quantity:4,
-      proPrice:100,
-      size:'M',
-      color:'Black',
-    },
-  ],
-  totalPrice:2000
+  'cartItems':[],
+  totalPrice:0
 }
 
 //2. Actions
@@ -79,20 +35,28 @@ const cartReducer=(state,action)=>{
       return{
         ...state,
         cartItems:state.cartItems.map(item=>item.id===action.payload?{...item,quantity:item.quantity+1}:item),
-        totalPrice:state.totalPrice + state.cartItems.find(item=>item.id===action.payload).proPrice,
+        totalPrice:state.totalPrice + state.cartItems.find(item=>item.id===action.payload).price,
       }
     case DECREASE_QUANTITY:
       return{
         ...state,
         cartItems:state.cartItems.map(item=>item.id===action.payload?{...item,quantity:item.quantity-1}:item),
-        totalPrice:state.totalPrice - state.cartItems.find(item=>item.id===action.payload).proPrice,
+        totalPrice:parseFloat(state.totalPrice - state.cartItems.find(item=>item.id===action.payload).price).toFixed(2),
       }
 
     case 'REMOVE_ITEM':
       return{
         ...state,
         cartItems:state.cartItems.filter(item=>item.id!==action.payload),
-        totalPrice:state.totalPrice - state.cartItems.find(item=>item.id===action.payload).proPrice,
+        totalPrice:parseFloat(state.totalPrice - state.cartItems.find(item=>item.id===action.payload).price).toFixed(2),
+      }
+    case 'SET_CART_ITEMS':
+      const cartItems=action.payload
+      const totalPrice=cartItems.reduce((total,item)=>total+item.price*item.quantity,0)
+      return{
+        ...state,
+        cartItems:action.payload,
+        totalPrice:totalPrice
       }
     default:
       return state
@@ -100,10 +64,99 @@ const cartReducer=(state,action)=>{
 
 }
 
-const Cart = () => {
-const [state,dispatch]=useReducer(cartReducer,initState)
+const storeData= async (key) =>{
+  try{
+    const value = await AsyncStorage.getItem(key)
+    if(value !== null){
+      return value;
+    }
+  }catch(e){
+    console.log('Error:',e)
+  }
 
-  const handleDecreaseQuantity=(id,quantity)=>{
+}
+
+
+
+
+
+
+const Cart = () => {
+  
+  const [state,dispatch]=useReducer(cartReducer,initState)
+
+  const handleRemoveProductFromCart = async (id,token) => {
+    axios.post('http://192.168.2.29:8080/api/v1/cart/remove',
+    null,
+    {
+        headers:{
+          'Authorization':`Bearer ${token}`
+        },
+        params:{
+          product_id:id,
+          quantity:1
+        }
+    })
+    .then(response=>{
+      console.log('Remove product from cart:',response.data)
+      console.log('Token',token)
+    })
+    .catch(error=>{
+      console.log('Remove product from cart: error:',error)
+      console.log('Token',token)
+    });
+  }
+  const handleUpdateProductFromCart = async (id,token) => {
+    axios.post('http://192.168.2.29:8080/api/v1/cart/update',
+    null,
+    {
+        headers:{
+          'Authorization':`Bearer ${token}`
+        },
+        params:{
+          product_id:id,
+          quantity:1
+        }
+    })
+    .then(response=>{
+      console.log('Update product from cart:',response.data)
+      console.log('Token',token)
+    })
+    .catch(error=>{
+      console.log('Update product from cart: error:',error)
+      console.log('Token',token)
+    });
+  }
+
+  useEffect(()=>{
+    const fetchCartItems=async ()=>{
+      const token=await storeData('token')
+      axios.get('http://192.168.2.29:8080/api/v1/cart/get-cart-details',{
+        headers:{
+          'Authorization':`Bearer ${token}`
+        }
+      })
+      .then(response=>{
+        console.log('Cart items:',response.data)
+        dispatch(
+          {
+            type:'SET_CART_ITEMS',
+            payload:response.data
+          })
+      })
+      .catch(error=>{
+        console.log('Get cart items error:',error)
+        
+      })
+    
+    
+    }
+    fetchCartItems()
+  },[])
+
+
+  const handleDecreaseQuantity=async(id,quantity)=>{
+    const token = await storeData('token');
     if(quantity<=1){
       Alert.alert(
         'Xác nhận',
@@ -115,7 +168,10 @@ const [state,dispatch]=useReducer(cartReducer,initState)
           },
           {
             text:'Xóa',
-            onPress:()=>dispatch({type:'REMOVE_ITEM',payload:id}),
+            onPress:()=>{
+                dispatch({type:'REMOVE_ITEM',payload:id})
+                handleRemoveProductFromCart(id,token)
+            },
             style:'destructive'
           },
         ],
@@ -124,7 +180,15 @@ const [state,dispatch]=useReducer(cartReducer,initState)
     }
     else{
       dispatch({type:DECREASE_QUANTITY,payload:id})
+      handleRemoveProductFromCart(id,token)
+      console.log('Decrease quantity:',id)
     }
+  }
+
+  const handleIncreaseQuantity=async(id)=>{
+    const token = await storeData('token');
+    dispatch({type:INCREASE_QUANTITY,payload:id})
+    handleUpdateProductFromCart(id,token)
   }
 
 
@@ -156,14 +220,15 @@ const [state,dispatch]=useReducer(cartReducer,initState)
             renderItem={({ item }) => (
               <CartItem
                 url={item.url}
-                proName={item.proName}
+                proName={item.productName}
                 quantity={item.quantity}
-                proPrice={"$"+item.proPrice}
+                proPrice={"$"+item.price}
                 size={item.size}
                 color={item.color}
                 containerStyles='mx-4 mt-3'
                 onDecreaseQuantity={()=>handleDecreaseQuantity(item.id,item.quantity)}
-                onIncreaseQuantity={()=>dispatch({type:INCREASE_QUANTITY,payload:item.id})}
+                onIncreaseQuantity={()=>handleIncreaseQuantity(item.id)}
+                  
               />
             )}
           />

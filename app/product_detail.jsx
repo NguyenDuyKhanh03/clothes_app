@@ -51,6 +51,7 @@ const ProductDetail = () => {
   useEffect(()=>{
     getProduct()
   },[])
+  console.log('Product:',product)
   // const product={
   //   id:id,
   //   price:20000,
@@ -93,6 +94,8 @@ const ProductDetail = () => {
   //   ]
   // }
   return (
+    
+
     <SafeAreaView>
       <View className='flex flex-row w-full mt-2'>
           <TouchableOpacity
@@ -114,14 +117,14 @@ const ProductDetail = () => {
           style={{width:width,height:500}}
         >
           {
-            product.images.map((url,index)=>(
+            product.images && product.images.length > 0 ? (product.images.map((url,index)=>(
               <View key={index}>
                 <Image source={{uri:url}} 
                   className='w-full h-full'
                   resizeMode='cover'
                 />
               </View>
-            ))
+            ))):<></>
           }
         </PagerView>
         <Text className='text-xl font-bold text-red-600 mt-2 mx-4'>{product.price}</Text>

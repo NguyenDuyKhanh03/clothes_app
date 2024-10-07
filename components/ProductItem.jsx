@@ -2,8 +2,9 @@ import { View, Text } from 'react-native'
 import React from 'react'
 import { Image } from 'react-native'
 import { TouchableOpacity } from 'react-native'
+import icons from '../constants/icons'
 
-const ProductItem = ({url,discountRate,name,price,isBestseller,containerStyles,onPress,onPressPro}) => {
+const ProductItem = ({url,discountRate,name,price,isBestseller,containerStyles,onPress,onPressPro,onPressAddCart}) => {
   return (
     <TouchableOpacity 
         onPress={onPressPro}
@@ -32,7 +33,19 @@ const ProductItem = ({url,discountRate,name,price,isBestseller,containerStyles,o
                 <Text className='text-red-500 text-xs font-normal ml-2'>Trong Á...</Text>
             </TouchableOpacity>
         }
-        <Text className={`ml-2 mb-3 ${discountRate?'text-red-400':'text-black'} text-sm mt-1`}>{price}</Text>
+        <View className='flex flex-row justify-between m-2  mb-3 items-center  '>
+            <Text className={`${discountRate?'text-red-400':'text-black'} text-sm mt-1`}>{price}</Text>
+            <TouchableOpacity
+                onPress={onPressAddCart}
+                activeOpacity={0.8}
+            >
+                <Image
+                    source={icons.ic_add_cart}
+                    className='w-7 h-6 absolute right-2 bottom-2'
+                    resizeMode='contain'
+                />
+            </TouchableOpacity>
+        </View>
     </TouchableOpacity>
   )
 }
