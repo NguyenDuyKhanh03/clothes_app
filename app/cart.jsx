@@ -7,13 +7,10 @@ import { router } from 'expo-router'
 import CartItem from '../components/CartItem'
 import { FlatList } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import axios from 'axios'
 import { handleUpdateProductFromCart } from '../services/CartService'
+import { fetchCartItems,handleDecreaseQuantity, handleIncreaseQuantity} from '../services/CartService'  
+import { cartReducer } from '../reducer/CartReducer'
 
-//useReducer
-//containerStyles:'mx-2 mt-2'
-// 1.Init state
 const initState={
   'cartItems':[],
   totalPrice:0
@@ -24,150 +21,13 @@ const INCREASE_QUANTITY='increateQuantity'
 const DECREASE_QUANTITY='decreaseQuantity'
 
 
-
-//3. Reducer
-
-const cartReducer=(state,action)=>{
-
-  switch(action.type){
-    case INCREASE_QUANTITY:
-      return{
-        ...state,
-        cartItems:state.cartItems.map(item=>item.id===action.payload?{...item,quantity:item.quantity+1}:item),
-        totalPrice:state.totalPrice + state.cartItems.find(item=>item.id===action.payload).price,
-      }
-    case DECREASE_QUANTITY:
-      return{
-        ...state,
-        cartItems:state.cartItems.map(item=>item.id===action.payload?{...item,quantity:item.quantity-1}:item),
-        totalPrice:parseFloat(state.totalPrice - state.cartItems.find(item=>item.id===action.payload).price).toFixed(2),
-      }
-
-    case 'REMOVE_ITEM':
-      return{
-        ...state,
-        cartItems:state.cartItems.filter(item=>item.id!==action.payload),
-        totalPrice:parseFloat(state.totalPrice - state.cartItems.find(item=>item.id===action.payload).price).toFixed(2),
-      }
-    case 'SET_CART_ITEMS':
-      const cartItems=action.payload
-      const totalPrice=cartItems.reduce((total,item)=>total+item.price*item.quantity,0)
-      return{
-        ...state,
-        cartItems:action.payload,
-        totalPrice:totalPrice
-      }
-    default:
-      return state
-  }
-
-}
-
-const storeData= async (key) =>{
-  try{
-    const value = await AsyncStorage.getItem(key)
-    if(value !== null){
-      return value;
-    }
-  }catch(e){
-    console.log('Error:',e)
-  }
-
-}
-
-
-
-
-
-
 const Cart = () => {
   
   const [state,dispatch]=useReducer(cartReducer,initState)
 
-  const handleRemoveProductFromCart = async (id,token) => {
-    axios.post('http://192.168.2.29:8080/api/v1/cart/remove',
-    null,
-    {
-        headers:{
-          'Authorization':`Bearer ${token}`
-        },
-        params:{
-          product_id:id,
-          quantity:1
-        }
-    })
-    .then(response=>{
-      console.log('Remove product from cart:',response.data)
-      console.log('Token',token)
-    })
-    .catch(error=>{
-      console.log('Remove product from cart: error:',error)
-      console.log('Token',token)
-    });
-  }
-
-
   useEffect(()=>{
-    const fetchCartItems=async ()=>{
-      const token=await storeData('token')
-      axios.get('http://192.168.2.29:8080/api/v1/cart/get-cart-details',{
-        headers:{
-          'Authorization':`Bearer ${token}`
-        }
-      })
-      .then(response=>{
-        console.log('Cart items:',response.data)
-        dispatch(
-          {
-            type:'SET_CART_ITEMS',
-            payload:response.data
-          })
-      })
-      .catch(error=>{
-        console.log('Get cart items error:',error)
-        
-      })
-    
-    
-    }
-    fetchCartItems()
+    fetchCartItems(dispatch)
   },[])
-
-
-  const handleDecreaseQuantity=async(id,quantity)=>{
-    const token = await storeData('token');
-    if(quantity<=1){
-      Alert.alert(
-        'Xác nhận',
-        'Bạn có muốn xóa sản phẩm này khỏi giỏ hàng không?',
-        [
-          {
-            text:'Hủy',
-            style:'cancel'
-          },
-          {
-            text:'Xóa',
-            onPress:()=>{
-                dispatch({type:'REMOVE_ITEM',payload:id})
-                handleRemoveProductFromCart(id,token)
-            },
-            style:'destructive'
-          },
-        ],
-        {cancelable:false}
-      )
-    }
-    else{
-      dispatch({type:DECREASE_QUANTITY,payload:id})
-      handleRemoveProductFromCart(id,token)
-      console.log('Decrease quantity:',id)
-    }
-  }
-
-  const handleIncreaseQuantity=async(id)=>{
-    dispatch({type:INCREASE_QUANTITY,payload:id})
-    handleUpdateProductFromCart(id)
-  }
 
 
   return (
@@ -204,8 +64,8 @@ const Cart = () => {
                 size={item.size}
                 color={item.color}
                 containerStyles='mx-4 mt-3'
-                onDecreaseQuantity={()=>handleDecreaseQuantity(item.id,item.quantity)}
-                onIncreaseQuantity={()=>handleIncreaseQuantity(item.id)}
+                onDecreaseQuantity={()=>handleDecreaseQuantity(item.id,item.quantity,dispatch)}
+                onIncreaseQuantity={()=>handleIncreaseQuantity(item.id,dispatch)}
                   
               />
             )}

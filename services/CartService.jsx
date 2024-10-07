@@ -1,6 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
 import { storeGetData } from './GetData';
+import { Alert } from 'react-native';
+
+const INCREASE_QUANTITY='increateQuantity'
+const DECREASE_QUANTITY='decreaseQuantity'
 
 export const handleRemoveProductFromCart = async (id) => {
     const token = await storeGetData('token');
@@ -24,6 +28,35 @@ export const handleRemoveProductFromCart = async (id) => {
       console.log('Token',token)
     });
 }
+export const handleDecreaseQuantity=async(id,quantity,dispatch)=>{
+    const token = await storeGetData('token');
+    if(quantity<=1){
+      Alert.alert(
+        'Xác nhận',
+        'Bạn có muốn xóa sản phẩm này khỏi giỏ hàng không?',
+        [
+          {
+            text:'Hủy',
+            style:'cancel'
+          },
+          {
+            text:'Xóa',
+            onPress:()=>{
+                dispatch({type:'REMOVE_ITEM',payload:id})
+                handleRemoveProductFromCart(id)
+            },
+            style:'destructive'
+          },
+        ],
+        {cancelable:false}
+      )
+    }
+    else{
+      dispatch({type:DECREASE_QUANTITY,payload:id})
+      handleRemoveProductFromCart(id,token)
+      console.log('Decrease quantity:',id)
+    }
+  }
 
 export const handleUpdateProductFromCart = async (id) => {
     const token = await storeGetData('token');
@@ -48,7 +81,12 @@ export const handleUpdateProductFromCart = async (id) => {
     });
 }
 
-export const fetchCartItems=async ()=>{
+export const handleIncreaseQuantity=async(id,dispatch)=>{
+    dispatch({type:INCREASE_QUANTITY,payload:id})
+    handleUpdateProductFromCart(id)
+}
+
+export const fetchCartItems=async (dispatch)=>{
     const token=await storeGetData('token')
     axios.get('http://192.168.2.29:8080/api/v1/cart/get-cart-details',{
       headers:{
