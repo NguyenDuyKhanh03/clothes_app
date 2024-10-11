@@ -221,7 +221,7 @@ const Shopping = () => {
               price={item.price}
               discountRate={item.discountRate}
               onPressPro={()=>Navigation.navigate('product_detail',{id:item.id})}
-              onPressAddCart={()=>handleAddCart(item.id)}
+              onPressAddCart={()=>console.log("Product:",item.id)}
               containerStyles={['ml-[11px] shadow-[8px_8px_24px_0px_rgba(0,_0,_0,_0.10)]',{width:width/2-20}]}
             />
           )}

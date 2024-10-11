@@ -5,98 +5,41 @@ import PagerView from 'react-native-pager-view'
 import { router, useLocalSearchParams } from 'expo-router'
 import { Image } from 'react-native'
 import { width } from '../utils/Scaling'
-import CommentItem from '../components/CommentItem'
 import { ScrollView } from 'react-native'
 import { TouchableOpacity } from 'react-native'
 import icons from '../constants/icons'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import axios from 'axios'
+import { getProduct } from '../services/ProductService'
+import { handleAddCart } from '../services/CartService'
+
 const ProductDetail = () => {
   const searchParams =useLocalSearchParams()
   
   const [product,setProduct]=useState({})
-  
-  const storeData= async (key) =>{
-    try{
-      const value = await AsyncStorage.getItem(key)
-      if(value !== null){
-        return value;
-      }
-    }catch(e){
-      console.log('Error:',e)
-    }
 
-  }
-  const getProduct= async () =>{
-    const token=await storeData('token')
-    const id=searchParams.id;
-    axios.get(`http://192.168.2.29:8080/api/v1/products/get`,{
-      headers:{
-        'Authorization':`Bearer ${token}`
-      },
-      params:{
-        id:id
-      }
-    })
-    .then(response=>{
-      setProduct(response.data)
-      console.log('Product:',product)
-    })
-    .catch(error=>{
-      console.log('Get product error:',error)
-    });
-    
+  const [color,setColor]=useState('')
+  const [size,setSize]=useState('')
 
-  }
+
   useEffect(()=>{
-    getProduct()
+    const fetchProduct=async()=>{
+      try{
+        const productData=await getProduct(searchParams.id)
+        setProduct(productData)
+        console.log('Product:',product)
+      }catch(error){
+        console.log('Get product error:',error)
+      }
+    }
+    fetchProduct()
   },[])
-  console.log('Product:',product)
-  // const product={
-  //   id:id,
-  //   price:20000,
-  //   productName:'Men\'s Harrington Jacket',
-  //   description:'Built for life and made to last, this full-zip corduroy jacket is part of our Nike Life collection. The spacious fit gives you plenty of room to layer underneath, while the soft corduroy keeps it casual and timeless.',
-  //   comments:[
-  //     {
-  //       id:1,
-  //       username:'duykhanh',
-  //       content:'Sản phẩm rất tốt',
-  //       rating:4,
-  //       date:'2021-10-10'
-  //     },
-  //     {
-  //       id:2,
-  //       username:'duy',
-  //       content:'Sản phẩm đẹp',
-  //       rating:4,
-  //       date:'2021-10-10'
-  //     },
-  //     {
-  //       id:3,
-  //       username:'duyen',
-  //       content:'Vừa vặn',
-  //       rating:3,
-  //       date:'2021-10-10'
-  //     },
-  //     {
-  //       id:4,
-  //       username:'duykhanh',
-  //       content:'Quá chật',
-  //       rating:2,
-  //       date:'2021-10-10'
-  //     }
-  //   ],
-  //   url:[
-  //     'https://i.pinimg.com/564x/5e/0c/dd/5e0cdd3800cea7f8a6d66aecb1649a7c.jpg',
-  //     'https://i.pinimg.com/564x/5e/0c/dd/5e0cdd3800cea7f8a6d66aecb1649a7c.jpg',
-  //     'https://i.pinimg.com/564x/5e/0c/dd/5e0cdd3800cea7f8a6d66aecb1649a7c.jpg',
-  //   ]
-  // }
+
+  const getColorStyle = (color) => {
+    return { backgroundColor: color.toLowerCase() };
+  };
   return (
     
 
-    <SafeAreaView>
+    <SafeAreaView className='relative'>
       <View className='flex flex-row w-full mt-2'>
           <TouchableOpacity
             onPress={() => router.back()}
@@ -129,6 +72,43 @@ const ProductDetail = () => {
         </PagerView>
         <Text className='text-xl font-bold text-red-600 mt-2 mx-4'>{product.price}</Text>
         <Text className='text-base font-bold text-black mt-3 mx-4'>{product.name}</Text>
+        <View>
+          <Text className='text-base font-normal text-black mt-3 mx-4 mb-2'>Màu sắc</Text>
+          <View className='flex flex-row items-center justify-start ml-4'>
+            {
+              product.sizes && product.sizes.length > 0 ? (product.colors.map((color,index)=>(
+                <TouchableOpacity
+                  key={index}
+                  onPress={()=>setColor(color)}
+                  className='flex flex-row items-center justify-center mr-3 rounded-xl w-14'
+                >
+                  <View
+                    style={getColorStyle(color)}
+                  className={`w-10 h-10 rounded-full  `} />
+                </TouchableOpacity>
+              ))
+
+              ):<></>
+            }
+          </View>
+        </View>
+        <View>
+          <Text className='text-base font-normal text-black mt-3 mx-4 mb-2'>Kích thước</Text>
+          <View className='flex flex-row items-center justify-start ml-4'>
+            {
+              product.sizes && product.sizes.length > 0 ? (product.sizes.map((size,index)=>(
+                <TouchableOpacity
+                  onPress={()=>setSize(size)}
+                  className='flex flex-row items-center justify-center mr-3 rounded-xl border w-14'
+                >
+                  <Text className='text-base font-normal  text-black '>{size}</Text>
+                </TouchableOpacity>
+              ))
+
+              ):<></>
+            }
+          </View>
+        </View>
         <Text className='text-xs font-normal text-[#27272780] mt-3 mx-4'>{product.description}</Text>
         <Text className='text-base font-bold text-black mt-6 mx-4'>Nhận xét</Text>
         {/* <FlatList
@@ -145,6 +125,18 @@ const ProductDetail = () => {
           )}
         /> */}
       </ScrollView>
+      <TouchableOpacity
+        className='w-full mx-4 absolute bottom-0'
+        onPress={() => {
+          console.log('Add to cart:',product.id);
+          console.log('Color:',color);
+          console.log('Size:',size);
+          handleAddCart(product.id,size,color)
+        }
+        }
+      >
+        <Text className='text-base font-bold text-white bg-red-600 rounded-xl text-center py-2 mx-4 mt-4'>Thêm vào giỏ hàng</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   )
 }

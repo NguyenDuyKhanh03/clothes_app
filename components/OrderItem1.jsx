@@ -12,29 +12,29 @@ const OrderItem1 = ({ url, quantity, proPrice, onIncreaseQuantity, onDecreaseQua
                 resizeMode='cover'
             />
             <Text className='text-xs text-red-500 mb-1'>{proPrice + "đ"}</Text>
-            <View className='flex flex-row mb-2 items-center'>
-                <TouchableOpacity
-                    onPress={onDecreaseQuantity}
-                    className='w-4 h-4 mr-2 items-center justify-center rounded-full bg-[#8E6CEF]'
-                >
-                    <Image
-                        source={icons.ic_minus}
-                        className='w-3 h-3'
-                        resizeMode='cover'
-                    />
-                </TouchableOpacity>
-                <Text className='text-sm font-bold text-black mr-2'>{quantity}</Text>
-                <TouchableOpacity
-                    onPress={onIncreaseQuantity}
-                    className='w-4 h-4 items-center justify-center rounded-full bg-[#8E6CEF]'
-                >
-                    <Image
-                        source={icons.ic_plus}
-                        className='w-3 h-3'
-                        resizeMode='contain'
-                    />
-                </TouchableOpacity>
-            </View>
+            <View className='flex flex-row mb-2 items-center border border-gray-300 rounded-2xl'>
+                    <TouchableOpacity
+                        onPress={onDecreaseQuantity}
+                        className='w-6 h-6  items-center justify-center'
+                    >
+                        <Image
+                            source={icons.ic_minus}
+                            className='w-3 h-3 '
+                            resizeMode='contain'
+                        />
+                    </TouchableOpacity>
+                    <Text className='text-base font-bold  text-black text-center w-10 border-r border-l border-gray-300'>{quantity}</Text>
+                    <TouchableOpacity
+                        onPress={onIncreaseQuantity}
+                        className='w-6 h-6 items-center justify-center'
+                    >
+                        <Image
+                            source={icons.ic_plus}
+                            className='w-3 h-3 '
+                            resizeMode='contain'
+                        />
+                    </TouchableOpacity>
+                </View>
         </View>
     )
 }

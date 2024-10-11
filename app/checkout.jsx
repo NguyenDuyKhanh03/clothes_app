@@ -1,11 +1,24 @@
 import { View, Text, FlatList, Image } from 'react-native'
-import React from 'react'
+import React, { useEffect, useReducer } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { TouchableOpacity } from 'react-native'
 import icons from "../constants/icons"
 import OrderItem from '../components/OrderItem'
 import { router } from 'expo-router'
 import OrderItem1 from '../components/OrderItem1'
+import { fetchCartItems } from '../services/CartService'
+import { orderReducer } from '../reducer/orderReducer'
+
+
+
+const initState={
+    'orderItems':[],
+    totalPrice:0
+}
+
+const INCREASE_QUANTITY='increateQuantity'
+const DECREASE_QUANTITY='decreaseQuantity'
+
 const orders = [
     {
         id: 1,
@@ -19,6 +32,13 @@ const orders = [
 ]
 
 const Checkout = () => {
+
+    const [state,dispatch]=useReducer(orderReducer,initState)
+
+    useEffect(()=>{
+        fetchCartItems(dispatch)
+    },[])
+
     return (
         <SafeAreaView className='w-full h-full bg-white  '>
             <View className='flex flex-row w-full items-center bg-white'>
@@ -56,25 +76,25 @@ const Checkout = () => {
                 <View className='bg-white mt-2'>
                     <Text className=' mx-4  my-3 text-black font-semibold text-xl'>Đặt hàng các mặt hàng</Text>
 
-                    {orders.length == 1 &&(
+                    {state.orderItems.length == 1 &&(
                         <OrderItem
-                            url={orders[0].url}
-                            proName={orders[0].proName}
-                            proPrice={orders[0].proPrice}
-                            quantity={orders[0].quantity}
-                            size={orders[0].size}
-                            color={orders[0].color}
+                            url={state.orderItems[0].url}
+                            proName={state.orderItems[0].productName}
+                            proPrice={state.orderItems[0].price}
+                            quantity={state.orderItems[0].quantity}
+                            size={state.orderItems[0].size}
+                            color={state.orderItems[0].color}
                             containerStyles='mb-2 mx-4'
                         />
                     )}
-                    {orders.length > 2 &&(
+                    {state.orderItems.length > 1 &&(
                         <FlatList
-                            data={orders}
-                            keyExtractor={(item) => item.id.toString()}
+                            data={state.orderItems}
+                            keyExtractor={(item) => item.productId.toString()}
                             renderItem={({ item }) => (
                                 <OrderItem1
                                     url={item.url}
-                                    proPrice={item.proPrice}
+                                    proPrice={item.price}
                                     quantity={item.quantity}
                                     containerStyles='ml-2'
                                 />

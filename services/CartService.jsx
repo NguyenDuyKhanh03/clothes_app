@@ -8,7 +8,7 @@ const DECREASE_QUANTITY='decreaseQuantity'
 
 export const handleRemoveProductFromCart = async (id) => {
     const token = await storeGetData('token');
-    axios.post('http://192.168.2.29:8080/api/v1/cart/remove',
+    axios.post('http://192.168.2.29:8080/api/v1/cart/remove?',
     null,
     {
         headers:{
@@ -53,7 +53,7 @@ export const handleDecreaseQuantity=async(id,quantity,dispatch)=>{
     }
     else{
       dispatch({type:DECREASE_QUANTITY,payload:id})
-      handleRemoveProductFromCart(id,token)
+      handleRemoveProductFromCart(id)
       console.log('Decrease quantity:',id)
     }
   }
@@ -107,23 +107,25 @@ export const fetchCartItems=async (dispatch)=>{
     })
 }
 
-export const handleAddCart = async (id) => {
+export const handleAddCart = async (id,size,color) => {
     const token = await storeGetData('token');
     axios.post('http://192.168.2.29:8080/api/v1/cart/add', 
-    null,
+    {
+      product_id: id,
+      quantity: 1,
+      size: size,
+      color: color
+    },
     {
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
       },
-      params: {
-        product_id: id,
-        quantity: 1
-      }
     })
     .then(response => {
       console.log('Add to cart:', response.data);
     })
     .catch(error => {
-      console.log('Add to cart error:', error.response ? error.response.data : error.message);
+      console.log('Add to cart error:', error.message );
     });
 }

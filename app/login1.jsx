@@ -6,26 +6,24 @@ import CustomButton from '../components/CustomButton'
 import icons from '../constants/icons'
 import { TouchableOpacity } from 'react-native'
 import { useNavigation } from 'expo-router'
-import {ANDROID_CLIENT_ID, IOS_CLIENT_ID,WEB_CLIENT_ID} from '@env'
-import * as Google from 'expo-auth-session/providers/google'
-import { makeRedirectUri } from 'expo-auth-session'
-import * as WebBrowser from 'expo-web-browser'
-
-WebBrowser.maybeCompleteAuthSession()
+import { getAuth, signInWithPopup, GoogleAuthProvider,signInWithRedirect } from 'firebase/auth'
+import { app } from '../config/firebaseConfig'
 
 const Login1 = () => {
   const [email, setEmail] = useState('')
   const navigation = useNavigation();
-  const config = {
-    iosClientId: IOS_CLIENT_ID,
-    androidClientId: ANDROID_CLIENT_ID,
-    webClientId: WEB_CLIENT_ID,
-    redirectUri: makeRedirectUri(),
-    scopes: ["profile", "email"],
-  }
 
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const [request, response, promptAsync] = Google.useAuthRequest(config)
+  const handleLogin = () => {
+    const auth = getAuth(app);
+    auth.languageCode = 'it';
+    const provider = new GoogleAuthProvider();
+    provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+    signInWithRedirect(auth, provider);
+  };
+
 
   return (
     <SafeAreaView className='mx-8 '>
@@ -51,7 +49,7 @@ const Login1 = () => {
           title='Continue with Facebook'
           containerStyles='mt-[71px] bg-[#e6e6e6]'
           titleStyles='text-[#272727]'
-          onPress={() => promptAsync()}
+          onPress={handleLogin}
         />
     </SafeAreaView>
   )

@@ -54,7 +54,7 @@ const Cart = () => {
 
           <FlatList
             data={state.cartItems}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item) => item.productId.toString()}
             renderItem={({ item }) => (
               <CartItem
                 url={item.url}
@@ -64,8 +64,8 @@ const Cart = () => {
                 size={item.size}
                 color={item.color}
                 containerStyles='mx-4 mt-3'
-                onDecreaseQuantity={()=>handleDecreaseQuantity(item.id,item.quantity,dispatch)}
-                onIncreaseQuantity={()=>handleIncreaseQuantity(item.id,dispatch)}
+                onDecreaseQuantity={()=>handleDecreaseQuantity(item.productId,item.quantity,dispatch)}
+                onIncreaseQuantity={()=>handleIncreaseQuantity(item.productId,dispatch)}
                   
               />
             )}

@@ -6,21 +6,21 @@ export const cartReducer=(state,action)=>{
       case INCREASE_QUANTITY:
         return{
           ...state,
-          cartItems:state.cartItems.map(item=>item.id===action.payload?{...item,quantity:item.quantity+1}:item),
-          totalPrice:state.totalPrice + state.cartItems.find(item=>item.id===action.payload).price,
+          cartItems:state.cartItems.map(item=>item.productId===action.payload?{...item,quantity:item.quantity+1}:item),
+          totalPrice:parseFloat(state.totalPrice + state.cartItems.find(item=>item.productId===action.payload).price).toFixed(2),
         }
       case DECREASE_QUANTITY:
         return{
           ...state,
-          cartItems:state.cartItems.map(item=>item.id===action.payload?{...item,quantity:item.quantity-1}:item),
-          totalPrice:parseFloat(state.totalPrice - state.cartItems.find(item=>item.id===action.payload).price).toFixed(2),
+          cartItems:state.cartItems.map(item=>item.productId===action.payload?{...item,quantity:item.quantity-1}:item),
+          totalPrice:parseFloat(state.totalPrice - state.cartItems.find(item=>item.productId===action.payload).price).toFixed(2),
         }
   
       case 'REMOVE_ITEM':
         return{
           ...state,
-          cartItems:state.cartItems.filter(item=>item.id!==action.payload),
-          totalPrice:parseFloat(state.totalPrice - state.cartItems.find(item=>item.id===action.payload).price).toFixed(2),
+          cartItems:state.cartItems.filter(item=>item.productId!==action.payload),
+          totalPrice:parseFloat(state.totalPrice - state.cartItems.find(item=>item.productId===action.payload).price).toFixed(2),
         }
       case 'SET_CART_ITEMS':
         const cartItems=action.payload
