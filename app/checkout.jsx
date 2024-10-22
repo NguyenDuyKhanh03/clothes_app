@@ -6,7 +6,7 @@ import icons from "../constants/icons"
 import OrderItem from '../components/OrderItem'
 import { router } from 'expo-router'
 import OrderItem1 from '../components/OrderItem1'
-import { fetchCartItems } from '../services/CartService'
+import { fetchCartItems,handleIncreaseQuantity,handleDecreaseQuantity } from '../services/CartService'
 import { orderReducer } from '../reducer/orderReducer'
 
 
@@ -19,17 +19,6 @@ const initState={
 const INCREASE_QUANTITY='increateQuantity'
 const DECREASE_QUANTITY='decreaseQuantity'
 
-const orders = [
-    {
-        id: 1,
-        url: 'https://i.pinimg.com/564x/5e/0c/dd/5e0cdd3800cea7f8a6d66aecb1649a7c.jpg',
-        proName: 'Abstract Art',
-        proPrice: 100,
-        quantity: 4,
-        size: 'M',
-        color: 'Black',
-    },
-]
 
 const Checkout = () => {
 
@@ -85,6 +74,8 @@ const Checkout = () => {
                             size={state.orderItems[0].size}
                             color={state.orderItems[0].color}
                             containerStyles='mb-2 mx-4'
+                            onDecreaseQuantity={()=>handleDecreaseQuantity(state.orderItems[0].productId,state.orderItems[0].quantity,dispatch)}
+                            onIncreaseQuantity={()=>handleIncreaseQuantity(state.orderItems[0].productId,dispatch)}
                         />
                     )}
                     {state.orderItems.length > 1 &&(
@@ -97,6 +88,8 @@ const Checkout = () => {
                                     proPrice={item.price}
                                     quantity={item.quantity}
                                     containerStyles='ml-2'
+                                    onDecreaseQuantity={()=>handleDecreaseQuantity(item.productId,item.quantity,dispatch)}
+                                    onIncreaseQuantity={()=>handleIncreaseQuantity(item.productId,dispatch)}
                                 />
 
                             )}
@@ -109,11 +102,11 @@ const Checkout = () => {
                 <View className='bg-white h-40 mt-2'>
                     <View className='flex flex-row justify-between mt-2 mx-4 mb-4'>
                         <Text className='text-sm font-normal'>Giá bán lẻ</Text>
-                        <Text className='text-base font-normal'>281.000đ</Text>
+                        <Text className='text-base font-normal'>{state.totalPrice+"đ"}</Text>
                     </View>
                     <View className='flex flex-row justify-between  mx-4 mb-4'>
                         <Text className='text-sm font-normal'>Tổng phụ</Text>
-                        <Text className='text-base font-normal'>121.000đ</Text>
+                        <Text className='text-base font-normal'>{state.totalPrice+"đ"}</Text>
                     </View>
                     <View className='flex flex-row justify-between mx-4 mb-4'>
                         <Text className='text-sm font-normal'>Phí vận chuyển</Text>
@@ -121,7 +114,7 @@ const Checkout = () => {
                     </View>
                     <View className='flex flex-row justify-between items-center mx-4'>
                         <Text className='text-sm font-normal'>Tổng số đơn hàng</Text>
-                        <Text className='text-xl text-red-500'>121.000đ</Text>
+                        <Text className='text-xl text-red-500'>{state.totalPrice+"đ"}</Text>
                     </View>
                 </View>
             </View>

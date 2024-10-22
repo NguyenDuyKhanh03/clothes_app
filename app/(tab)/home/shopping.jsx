@@ -13,7 +13,6 @@ import { router } from 'expo-router'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useNavigation } from 'expo-router'
 import { handleGetProduct } from '../../../services/ProductService'
-import { handleAddCart } from '../../../services/CartService'
 
 const categories=[
   {
@@ -161,6 +160,7 @@ const Shopping = () => {
         >
           <View className='flex flex-row mx-2 mt-2 items-center'>
             <TouchableOpacity
+              onPress={()=>router.push('../../notification')}
               className='mr-3'
             >
               <Image

@@ -40,6 +40,7 @@ const Login1 = () => {
           onPress={() => navigation.navigate('login2', {email})}
         />
         <TouchableOpacity
+        onPress={() => navigation.navigate('signup')}
           className='mt-4'
         >
             <Text className='text-xs text-[#272727] font-bold  text-left'>Dont have an Account ? Create One</Text> 

@@ -6,20 +6,20 @@ export const orderReducer=(state,action)=>{
       case INCREASE_QUANTITY:
         return{
           ...state,
-          orderItems:state.cartItems.map(item=>item.productId===action.payload?{...item,quantity:item.quantity+1}:item),
+          orderItems:state.orderItems.map(item=>item.productId===action.payload?{...item,quantity:item.quantity+1}:item),
           totalPrice:state.totalPrice + state.orderItems.find(item=>item.productId===action.payload).price,
         }
       case DECREASE_QUANTITY:
         return{
           ...state,
-          orderItems:state.cartItems.map(item=>item.productId===action.payload?{...item,quantity:item.quantity-1}:item),
+          orderItems:state.orderItems.map(item=>item.productId===action.payload?{...item,quantity:item.quantity-1}:item),
           totalPrice:parseFloat(state.totalPrice - state.orderItems.find(item=>item.productId===action.payload).price).toFixed(2),
         }
   
       case 'REMOVE_ITEM':
         return{
           ...state,
-          orderItems:state.cartItems.filter(item=>item.productId!==action.payload),
+          orderItems:state.orderItems.filter(item=>item.productId!==action.payload),
           totalPrice:parseFloat(state.totalPrice - state.orderItems.find(item=>item.productId===action.payload).price).toFixed(2),
         }
       case 'SET_CART_ITEMS':

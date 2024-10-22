@@ -7,27 +7,36 @@ import icons from '../../constants/icons'
 import { Client } from '@stomp/stompjs'
 import { TextDecoder } from 'text-encoding'
 import SockJS from 'sockjs-client'
-
+import { storeGetData } from '../../services/GetData'
 
 const Category = () => {
-
   const [messages, setMessages] = useState([]);
   const [msg, setMsg] = useState('')
   const [stompClient, setStompClient] = useState(null);
-
   useEffect(() => {
-    const socket = new SockJS('http://192.168.2.29:8080/ws');
-    const client = new Client({
-      webSocketFactory: () => socket,
-      onConnect: () => onConnected(client),
-      onStompError: onError,
-    });
-    setStompClient(client);
+    const configSocket = async () => {
+      const token=await storeGetData('token');
+      const socket = new SockJS('http://192.168.2.29:8080/secured/room');
+      const client = new Client({
+        webSocketFactory: () => socket,
+        connectHeaders:{
+          Authorization:`Bearer ${token}`
+        },
+        onConnect: () => onConnected(client),
+        onStompError: onError,
+      });
+      
+      setStompClient(client);
+      client.activate();
+    }
+    configSocket();
+    
+    
   }, []);
 
   const onConnected = (client) => {
     client.subscribe('/topic/public', (message) => {
-      console.log('Received message:', message.body);
+      
       const receivedMessage = JSON.parse(message.body);
       setMessages((prevMessages) => [
         ...prevMessages,
@@ -43,9 +52,6 @@ const Category = () => {
   };
 
   useEffect(() => {
-    if (stompClient) {
-      stompClient.activate();
-    }
 
     return () => {
       if (stompClient) {

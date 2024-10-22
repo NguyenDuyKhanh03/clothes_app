@@ -33,7 +33,7 @@ export const handleDecreaseQuantity=async(id,quantity,dispatch)=>{
     if(quantity<=1){
       Alert.alert(
         'Xác nhận',
-        'Bạn có muốn xóa sản phẩm này khỏi giỏ hàng không?',
+        'Bạn có chắc muốn xóa sản phẩm này?',
         [
           {
             text:'Hủy',
